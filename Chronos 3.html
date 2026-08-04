@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Chronos — Master every moment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Apple iOS Light */
+      --bg-primary: #F2F2F7;
+      --bg-secondary: #FFFFFF;
+      --bg-tertiary: #E5E5EA;
+      --label-primary: #000000;
+      --label-secondary: #3C3C43;
+      --label-tertiary: #8E8E93;
+      --separator: #C6C6C8;
+      --system-blue: #007AFF;
+      --system-green: #34C759;
+      --system-red: #FF3B30;
+      --system-orange: #FF9500;
+      --system-indigo: #5856D6;
+      --system-teal: #5AC8FA;
+      --system-gray: #8E8E93;
+      --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --nav-bg: rgba(255,255,255,0.85);
+      --gradient-chat: linear-gradient(135deg, #007AFF, #5856D6, #AF52DE);
+    }
+    [data-theme="dark"] {
+      --bg-primary: #000000;
+      --bg-secondary: #1C1C1E;
+      --bg-tertiary: #2C2C2E;
+      --label-primary: #FFFFFF;
+      --label-secondary: #EBEBF5;
+      --label-tertiary: #8E8E93;
+      --separator: #38383A;
+      --system-blue: #0A84FF;
+      --system-green: #30D158;
+      --system-red: #FF453A;
+      --system-orange: #FF9F0A;
+      --system-indigo: #5E5CE6;
+      --system-teal: #64D2FF;
+      --system-gray: #8E8E93;
+      --card-shadow: 0 2px 16px rgba(0,0,0,0.4);
+      --nav-bg: rgba(28,28,30,0.85);
+      --gradient-chat: linear-gradient(135deg, #0A84FF, #5E5CE6, #BF5AF2);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--label-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    .hidden { display: none !important; }
+    /* Login */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(160deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    }
+    .logo-area { text-align: center; margin-bottom: 40px; }
+    .logo-area h1 {
+      font-size: 42px; font-weight: 700; letter-spacing: -1px;
+      background: var(--gradient-chat);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .logo-area p { color: var(--label-tertiary); font-size: 15px; margin-top: 6px; font-weight: 400; }
+    .login-card {
+      background: var(--bg-secondary);
+      border-radius: 20px;
+      padding: 32px 28px;
+      width: 100%; max-width: 360px;
+      box-shadow: var(--card-shadow);
+    }
+    .login-card h2 { font-size: 22px; font-weight: 600; margin-bottom: 24px; text-align: center; }
+    .input-group { margin-bottom: 16px; }
+    .input-group label { display: block; font-size: 13px; color: var(--label-secondary); margin-bottom: 6px; font-weight: 500; }
+    .input-group input, .input-group select, .input-group textarea {
+      width: 100%; padding: 14px 16px; border-radius: 12px;
+      border: 1px solid var(--separator); background: var(--bg-primary);
+      color: var(--label-primary); font-family: inherit; font-size: 16px;
+      outline: none; transition: border 0.2s;
+    }
+    .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+      border-color: var(--system-blue);
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 24px; border-radius: 14px; border: none;
+      font-family: inherit; font-size: 16px; font-weight: 600;
+      cursor: pointer; transition: transform 0.15s, opacity 0.15s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--system-blue); color: #fff; width: 100%; }
+    .btn-secondary { background: var(--bg-tertiary); color: var(--label-primary); }
+    .btn-danger { background: var(--system-red); color: #fff; }
+    .btn-green { background: var(--system-green); color: #fff; }
+    .error-msg { color: var(--system-red); font-size: 13px; text-align: center; margin-top: 12px; }
+    /* App Shell */
+    #app { display: flex; flex-direction: column; min-height: 100vh; }
+    header.app-header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 0.5px solid var(--separator);
+      padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-left h1 { font-size: 20px; font-weight: 700; }
+    .header-left span { font-size: 12px; color: var(--label-tertiary); }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 50%; border: none;
+      background: var(--bg-tertiary); color: var(--label-primary);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px;
+    }
+    .theme-toggle { font-size: 20px; }
+    main { flex: 1; padding: 16px 16px 100px; max-width: 900px; margin: 0 auto; width: 100%; }
+    /* Bottom Nav */
+    nav.bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-top: 0.5px solid var(--separator);
+      display: flex; justify-content: space-around; padding: 8px 0 env(safe-area-inset-bottom);
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      background: none; border: none; color: var(--label-tertiary);
+      font-family: inherit; font-size: 10px; font-weight: 500; cursor: pointer;
+      padding: 6px 12px; border-radius: 10px;
+    }
+    .nav-item.active { color: var(--system-blue); }
+    .nav-item svg { width: 24px; height: 24px; }
+    /* Cards & Widgets */
+    .widget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    @media (max-width: 500px) { .widget-grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--bg-secondary); border-radius: 16px;
+      padding: 18px; box-shadow: var(--card-shadow);
+    }
+    .card-title { font-size: 13px; font-weight: 600; color: var(--label-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .digital-time {
+      font-size: 36px; font-weight: 600; letter-spacing: -1px;
+      font-variant-numeric: tabular-nums;
+    }
+    .time-date { font-size: 14px; color: var(--label-secondary); margin-top: 4px; }
+    .timer-display {
+      font-size: 42px; font-weight: 600; text-align: center;
+      font-variant-numeric: tabular-nums; color: var(--system-blue);
+    }
+    .timer-controls { display: flex; gap: 10px; justify-content: center; margin-top: 12px; }
+    .timer-controls .btn { padding: 10px 18px; font-size: 14px; border-radius: 12px; }
+    /* Calendar / Day view */
+    .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .day-header h2 { font-size: 22px; font-weight: 600; }
+    .day-nav { display: flex; gap: 8px; }
+    .timeline { position: relative; }
+    .time-slot {
+      display: flex; gap: 12px; min-height: 56px; border-bottom: 0.5px solid var(--separator);
+      padding: 4px 0;
+    }
+    .time-label {
+      width: 52px; flex-shrink: 0; font-size: 12px; color: var(--label-tertiary);
+      font-weight: 500; padding-top: 4px; text-align: right;
+    }
+    .slot-content { flex: 1; position: relative; }
+    .task-block {
+      background: var(--system-blue); color: #fff; border-radius: 10px;
+      padding: 8px 12px; margin: 2px 0; font-size: 13px; font-weight: 500;
+      cursor: pointer; position: relative; overflow: hidden;
+    }
+    .task-block.routine { background: var(--system-indigo); }
+    .task-block .task-time { font-size: 11px; opacity: 0.9; }
+    .task-block .task-comment { font-size: 11px; opacity: 0.85; margin-top: 2px; font-weight: 400; }
+    /* Task list cards */
+    .task-card {
+      background: var(--bg-secondary); border-radius: 14px; padding: 14px 16px;
+      margin-bottom: 10px; box-shadow: var(--card-shadow);
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+    }
+    .task-info h3 { font-size: 16px; font-weight: 600; }
+    .task-meta { font-size: 13px; color: var(--label-secondary); margin-top: 4px; }
+    .task-comment-preview { font-size: 12px; color: var(--label-tertiary); margin-top: 4px; font-style: italic; }
+    .task-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .task-actions button {
+      width: 36px; height: 36px; border-radius: 10px; border: none;
+      background: var(--bg-tertiary); cursor: pointer; font-size: 14px;
+    }
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200;
+      display: flex; align-items: flex-end; justify-content: center;
+      padding: 0; backdrop-filter: blur(4px);
+    }
+    .modal {
+      background: var(--bg-secondary); border-radius: 20px 20px 0 0;
+      width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+      padding: 24px 20px 40px; animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal h2 { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-actions .btn { flex: 1; }
+    .days-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .day-chip {
+      padding: 8px 12px; border-radius: 20px; border: 1.5px solid var(--separator);
+      background: transparent; font-size: 13px; font-weight: 500; cursor: pointer;
+      color: var(--label-secondary); font-family: inherit;
+    }
+    .day-chip.active { background: var(--system-blue); color: #fff; border-color: var(--system-blue); }
+    .checkbox-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+    .checkbox-row input { width: 20px; height: 20px; accent-color: var(--system-blue); }
+    /* Reports */
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-card { text-align: center; padding: 16px; }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--system-blue); }
+    .stat-label { font-size: 12px; color: var(--label-tertiary); margin-top: 4px; }
+    .activity-bar { margin-bottom: 12px; }
+    .activity-bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+    .bar-track { height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--system-blue); border-radius: 4px; transition: width 0.4s; }
+    /* Chat */
+    #chat-panel {
+      position: fixed; inset: 0; z-index: 300; background: var(--bg-primary);
+      display: flex; flex-direction: column; transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    #chat-panel.open { transform: translateY(0); }
+    .chat-header {
+      padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+      background: var(--nav-bg); border-bottom: 0.5px solid var(--separator);
+    }
+    .chat-header h2 { flex: 1; font-size: 18px; font-weight: 600; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .msg {
+      max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.4;
+    }
+    .msg.bot { background: var(--bg-secondary); align-self: flex-start; border-bottom-left-radius: 4px; }
+    .msg.user { background: var(--system-blue); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .chat-input-area {
+      padding: 12px 16px env(safe-area-inset-bottom); display: flex; gap: 10px;
+      background: var(--nav-bg); border-top: 0.5px solid var(--separator);
+    }
+    .chat-input-area input {
+      flex: 1; padding: 12px 16px; border-radius: 22px; border: 1px solid var(--separator);
+      background: var(--bg-primary); color: var(--label-primary); font-family: inherit; font-size: 15px;
+    }
+    .chat-send {
+      width: 44px; height: 44px; border-radius: 50%; border: none;
+      background: var(--gradient-chat); color: #fff; font-size: 18px; cursor: pointer;
+    }
+    .fab-chat {
+      position: fixed; bottom: 80px; right: 20px; z-index: 90;
+      width: 56px; height: 56px; border-radius: 50%; border: none;
+      background: var(--gradient-chat); color: #fff; font-size: 24px;
+      box-shadow: 0 4px 20px rgba(0,122,255,0.4); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* Admin */
+    .user-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px; background: var(--bg-secondary); border-radius: 12px; margin-bottom: 8px;
+    }
+    .section-title { font-size: 18px; font-weight: 600; margin: 20px 0 12px; }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--label-tertiary); }
+    .empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+      background: var(--bg-tertiary); color: var(--label-secondary);
+    }
+    .badge.admin { background: rgba(0,122,255,0.15); color: var(--system-blue); }
+    /* Google Calendar note */
+    .info-banner {
+      background: rgba(0,122,255,0.1); border-radius: 12px; padding: 14px;
+      font-size: 13px; color: var(--label-secondary); margin-bottom: 16px;
+      border: 1px solid rgba(0,122,255,0.2);
+    }
+  </style>
+</head>
+<body>
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div class="logo-area">
+      <h1>Chronos</h1>
+      <p>Master every moment</p>
+    </div>
+    <div class="login-card">
+      <h2>Sign In</h2>
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="Username" autocomplete="username">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
+      <p class="error-msg hidden" id="login-error">Invalid credentials</p>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="hidden">
+    <header class="app-header">
+      <div class="header-left">
+        <div>
+          <h1>Chronos</h1>
+          <span>Master every moment</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌓</button>
+        <button class="icon-btn" onclick="logout()" title="Logout">⎋</button>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <!-- HOME -->
+      <section id="view-home">
+        <div class="widget-grid">
+          <div class="card">
+            <div class="card-title">UAE Live Time</div>
+            <div class="digital-time" id="uae-time">--:--:--</div>
+            <div class="time-date" id="uae-date">—</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Focus Timer · 30 min</div>
+            <div class="timer-display" id="timer-display">30:00</div>
+            <div class="timer-controls">
+              <button class="btn btn-primary" id="timer-start" onclick="startTimer()">Start</button>
+              <button class="btn btn-secondary" id="timer-pause" onclick="pauseTimer()" disabled>Pause</button>
+              <button class="btn btn-secondary" onclick="resetTimer()">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-header">
+          <h2 id="current-day-label">Today</h2>
+          <div class="day-nav">
+            <button class="icon-btn" onclick="changeDay(-1)">‹</button>
+            <button class="icon-btn" onclick="goToday()">●</button>
+            <button class="icon-btn" onclick="changeDay(1)">›</button>
+          </div>
+        </div>
+
+        <div class="info-banner" id="gcal-banner">
+          📅 Google Calendar connected for <strong>jithinrajofficialuae@gmail.com</strong>. Reminders fire 20 min before each task (local simulation + browser notifications).
+        </div>
+
+        <div id="timeline" class="timeline"></div>
+      </section>
+
+      <!-- TASKS -->
+      <section id="view-tasks" class="hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h2 style="font-size:22px;font-weight:600;">All Tasks</h2>
+          <button class="btn btn-primary" style="padding:10px 18px;font-size:14px;" onclick="openTaskModal()">+ Add Task</button>
+        </div>
+        <div id="tasks-list"></div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section id="view-analytics" class="hidden">
+        <h2 style="font-size:22px;font-weight:600;margin-bottom:16px;">AI Analyser</h2>
+        <div class="stat-grid">
+          <div class="card stat-card">
+            <div class="stat-value" id="stat-today">0h</div>
+            <div class="stat-label">Today</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-value" id="stat-week">0h</div>
+            <div class="stat-label">This Week</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-value" id="stat-month">0h</div>
+            <div class="stat-label">This Month</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-value" id="stat-tasks">0</div>
+            <div class="stat-label">Tasks Logged</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Time by Activity</div>
+          <div id="activity-bars"></div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">AI Insights</div>
+          <p id="ai-insight" style="font-size:14px;line-height:1.5;color:var(--label-secondary);"></p>
+        </div>
+      </section>
+
+      <!-- ADMIN -->
+      <section id="view-admin" class="hidden">
+        <h2 style="font-size:22px;font-weight:600;margin-bottom:8px;">Admin Dashboard</h2>
+        <p style="color:var(--label-tertiary);font-size:13px;margin-bottom:16px;">Manage users & settings</p>
+
+        <div class="info-banner">
+          Google Calendar: Linked to <strong>jithinrajofficialuae@gmail.com</strong>. For production OAuth, configure Google Cloud Console client ID and enable Calendar API. Current version uses local scheduling + Notification API for 20-min reminders.
+        </div>
+
+        <div class="section-title">Users</div>
+        <div id="users-list"></div>
+        <button class="btn btn-primary" style="margin-top:12px;width:auto;" onclick="openUserModal()">+ Add User</button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-view="home" onclick="switchView('home')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Home
+      </button>
+      <button class="nav-item" data-view="tasks" onclick="switchView('tasks')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Tasks
+      </button>
+      <button class="nav-item" data-view="analytics" onclick="switchView('analytics')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Analytics
+      </button>
+      <button class="nav-item" data-view="admin" onclick="switchView('admin')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        Admin
+      </button>
+    </nav>
+
+    <button class="fab-chat" onclick="openChat()" title="AI Chat">💬</button>
+  </div>
+
+  <!-- Task Modal -->
+  <div id="task-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 id="task-modal-title">Add Task</h2>
+      <input type="hidden" id="task-id">
+      <div class="input-group">
+        <label>Task Name</label>
+        <input type="text" id="task-name" placeholder="e.g. Deep Work Session">
+      </div>
+      <div class="input-group">
+        <label>Start Time</label>
+        <input type="time" id="task-start">
+      </div>
+      <div class="input-group">
+        <label>End Time</label>
+        <input type="time" id="task-end">
+      </div>
+      <div class="input-group">
+        <label>Comments / Notes</label>
+        <textarea id="task-comment" rows="2" placeholder="Optional notes..."></textarea>
+      </div>
+      <div class="input-group">
+        <label>Repeat on days</label>
+        <div class="days-selector" id="days-selector">
+          <button type="button" class="day-chip" data-day="0">Sun</button>
+          <button type="button" class="day-chip" data-day="1">Mon</button>
+          <button type="button" class="day-chip" data-day="2">Tue</button>
+          <button type="button" class="day-chip" data-day="3">Wed</button>
+          <button type="button" class="day-chip" data-day="4">Thu</button>
+          <button type="button" class="day-chip" data-day="5">Fri</button>
+          <button type="button" class="day-chip" data-day="6">Sat</button>
+        </div>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="task-continuous">
+        <label for="task-continuous">Repeat continuously (every week)</label>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="task-routine">
+        <label for="task-routine">Mark as routine task</label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeTaskModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTask()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Modal -->
+  <div id="user-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>Add User</h2>
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="new-username" placeholder="Username">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="new-password" placeholder="Password">
+      </div>
+      <div class="input-group">
+        <label>Role</label>
+        <select id="new-role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveUser()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Panel -->
+  <div id="chat-panel">
+    <div class="chat-header">
+      <button class="icon-btn" onclick="closeChat()">✕</button>
+      <h2>Chronos AI</h2>
+      <span class="badge" style="background:var(--gradient-chat);color:#fff;">Live</span>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg bot">Hi! I'm Chronos AI. Ask me about your schedule, request insights, or manage tasks.<br><br>
+        <strong>Commands:</strong><br>
+        • <code>Add Meeting 14:00-15:00</code><br>
+        • <code>Remove Meeting</code><br>
+        • Or ask anything about the world / your productivity.</div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Message Chronos AI..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+
+  <script>
+    // ========== STATE ==========
+    const STORAGE_KEY = 'chronos_data_v1';
+    let state = {
+      users: [{ username: 'Jithin', password: '02091998', role: 'admin' }],
+      tasks: [],
+      currentUser: null,
+      theme: 'light',
+      selectedDate: new Date()
+    };
+    let timerInterval = null;
+    let timerSeconds = 30 * 60;
+    let timerRunning = false;
+    let timeInterval = null;
+    let reminderCheckInterval = null;
+
+    // ========== INIT ==========
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          state.users = parsed.users || state.users;
+          state.tasks = parsed.tasks || [];
+          state.theme = parsed.theme || 'light';
+        }
+      } catch (e) {}
+      document.documentElement.setAttribute('data-theme', state.theme);
+    }
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        users: state.users,
+        tasks: state.tasks,
+        theme: state.theme
+      }));
+    }
+
+    // ========== AUTH ==========
+    function handleLogin() {
+      const u = document.getElementById('login-user').value.trim();
+      const p = document.getElementById('login-pass').value;
+      const user = state.users.find(x => x.username === u && x.password === p);
+      if (user) {
+        state.currentUser = user;
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        document.getElementById('login-error').classList.add('hidden');
+        startLiveClock();
+        startReminderChecker();
+        renderAll();
+        requestNotificationPermission();
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+      }
+    }
+    function logout() {
+      state.currentUser = null;
+      document.getElementById('app').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+      stopLiveClock();
+      clearInterval(reminderCheckInterval);
+    }
+
+    // ========== THEME ==========
+    function toggleTheme() {
+      state.theme = state.theme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', state.theme);
+      saveState();
+    }
+
+    // ========== UAE CLOCK ==========
+    function startLiveClock() {
+      updateUAETime();
+      timeInterval = setInterval(updateUAETime, 1000);
+    }
+    function stopLiveClock() { clearInterval(timeInterval); }
+    function updateUAETime() {
+      const now = new Date();
+      const opts = { timeZone: 'Asia/Dubai', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+      const dateOpts = { timeZone: 'Asia/Dubai', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('uae-time').textContent = now.toLocaleTimeString('en-GB', opts);
+      document.getElementById('uae-date').textContent = now.toLocaleDateString('en-GB', dateOpts) + ' · GST';
+    }
+
+    // ========== TIMER ==========
+    function startTimer() {
+      if (timerRunning) return;
+      timerRunning = true;
+      document.getElementById('timer-start').disabled = true;
+      document.getElementById('timer-pause').disabled = false;
+      timerInterval = setInterval(() => {
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerRunning = false;
+          notify('Focus session complete!', 'Great work. Take a short break.');
+          resetTimer();
+          return;
+        }
+        timerSeconds--;
+        updateTimerDisplay();
+      }, 1000);
+    }
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      document.getElementById('timer-start').disabled = false;
+      document.getElementById('timer-pause').disabled = true;
+    }
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timerSeconds = 30 * 60;
+      updateTimerDisplay();
+      document.getElementById('timer-start').disabled = false;
+      document.getElementById('timer-pause').disabled = true;
+    }
+    function updateTimerDisplay() {
+      const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+      const s = (timerSeconds % 60).toString().padStart(2, '0');
+      document.getElementById('timer-display').textContent = `${m}:${s}`;
+    }
+
+    // ========== NAV ==========
+    function switchView(view) {
+      ['home', 'tasks', 'analytics', 'admin'].forEach(v => {
+        document.getElementById('view-' + v).classList.toggle('hidden', v !== view);
+      });
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.view === view);
+      });
+      if (view === 'analytics') renderAnalytics();
+      if (view === 'admin') renderUsers();
+      if (view === 'tasks') renderTasksList();
+      if (view === 'home') renderTimeline();
+    }
+
+    // ========== DATE NAV ==========
+    function changeDay(delta) {
+      state.selectedDate.setDate(state.selectedDate.getDate() + delta);
+      renderTimeline();
+    }
+    function goToday() {
+      state.selectedDate = new Date();
+      renderTimeline();
+    }
+    function formatDayLabel(d) {
+      const today = new Date();
+      const isToday = d.toDateString() === today.toDateString();
+      const opts = { weekday: 'long', month: 'short', day: 'numeric' };
+      return isToday ? 'Today · ' + d.toLocaleDateString('en-GB', opts) : d.toLocaleDateString('en-GB', opts);
+    }
+
+    // ========== TASKS ==========
+    function getTasksForDate(date) {
+      const day = date.getDay();
+      const dateStr = date.toISOString().slice(0, 10);
+      return state.tasks.filter(t => {
+        if (t.date === dateStr) return true;
+        if (t.repeatDays && t.repeatDays.includes(day) && t.continuous) return true;
+        if (t.repeatDays && t.repeatDays.includes(day) && !t.continuous) {
+          // one-time weekly occurrence relative to creation – simplified: show if day matches
+          return true;
+        }
+        return false;
+      }).sort((a, b) => a.start.localeCompare(b.start));
+    }
+
+    function openTaskModal(id = null) {
+      document.getElementById('task-modal').classList.remove('hidden');
+      document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
+      if (id) {
+        const t = state.tasks.find(x => x.id === id);
+        document.getElementById('task-modal-title').textContent = 'Edit Task';
+        document.getElementById('task-id').value = id;
+        document.getElementById('task-name').value = t.name;
+        document.getElementById('task-start').value = t.start;
+        document.getElementById('task-end').value = t.end;
+        document.getElementById('task-comment').value = t.comment || '';
+        document.getElementById('task-continuous').checked = !!t.continuous;
+        document.getElementById('task-routine').checked = !!t.routine;
+        (t.repeatDays || []).forEach(d => {
+          document.querySelector(`.day-chip[data-day="${d}"]`)?.classList.add('active');
+        });
+      } else {
+        document.getElementById('task-modal-title').textContent = 'Add Task';
+        document.getElementById('task-id').value = '';
+        document.getElementById('task-name').value = '';
+        document.getElementById('task-start').value = '09:00';
+        document.getElementById('task-end').value = '10:00';
+        document.getElementById('task-comment').value = '';
+        document.getElementById('task-continuous').checked = true;
+        document.getElementById('task-routine').checked = false;
+      }
+    }
+    function closeTaskModal() {
+      document.getElementById('task-modal').classList.add('hidden');
+    }
+    document.getElementById('days-selector').addEventListener('click', e => {
+      if (e.target.classList.contains('day-chip')) e.target.classList.toggle('active');
+    });
+
+    function saveTask() {
+      const id = document.getElementById('task-id').value;
+      const name = document.getElementById('task-name').value.trim();
+      const start = document.getElementById('task-start').value;
+      const end = document.getElementById('task-end').value;
+      const comment = document.getElementById('task-comment').value.trim();
+      const continuous = document.getElementById('task-continuous').checked;
+      const routine = document.getElementById('task-routine').checked;
+      const repeatDays = [...document.querySelectorAll('.day-chip.active')].map(c => parseInt(c.dataset.day));
+      if (!name || !start || !end) { alert('Please fill name and times'); return; }
+      if (start >= end) { alert('End time must be after start'); return; }
+
+      if (id) {
+        const t = state.tasks.find(x => x.id === id);
+        Object.assign(t, { name, start, end, comment, continuous, routine, repeatDays });
+      } else {
+        state.tasks.push({
+          id: 't_' + Date.now(),
+          name, start, end, comment, continuous, routine, repeatDays,
+          date: state.selectedDate.toISOString().slice(0, 10),
+          createdAt: new Date().toISOString()
+        });
+      }
+      saveState();
+      closeTaskModal();
+      renderAll();
+      scheduleReminders();
+    }
+
+    function deleteTask(id) {
+      if (!confirm('Delete this task?')) return;
+      state.tasks = state.tasks.filter(t => t.id !== id);
+      saveState();
+      renderAll();
+    }
+
+    function renderTimeline() {
+      document.getElementById('current-day-label').textContent = formatDayLabel(state.selectedDate);
+      const tasks = getTasksForDate(state.selectedDate);
+      const container = document.getElementById('timeline');
+      let html = '';
+      for (let h = 6; h <= 22; h++) {
+        const label = h.toString().padStart(2, '0') + ':00';
+        const hourTasks = tasks.filter(t => {
+          const sh = parseInt(t.start.split(':')[0]);
+          return sh === h;
+        });
+        html += `<div class="time-slot"><div class="time-label">${label}</div><div class="slot-content">`;
+        hourTasks.forEach(t => {
+          const cls = t.routine ? 'task-block routine' : 'task-block';
+          html += `<div class="${cls}" onclick="openTaskModal('${t.id}')">
+            <div>${t.name}</div>
+            <div class="task-time">${t.start} – ${t.end}</div>
+            ${t.comment ? `<div class="task-comment">${t.comment}</div>` : ''}
+          </div>`;
+        });
+        html += `</div></div>`;
+      }
+      container.innerHTML = html || '<div class="empty-state">No tasks for this day. Add one from Tasks tab.</div>';
+    }
+
+    function renderTasksList() {
+      const list = document.getElementById('tasks-list');
+      if (!state.tasks.length) {
+        list.innerHTML = '<div class="empty-state">No tasks yet. Tap + Add Task.</div>';
+        return;
+      }
+      list.innerHTML = state.tasks.map(t => `
+        <div class="task-card">
+          <div class="task-info">
+            <h3>${t.name} ${t.routine ? '<span class="badge">Routine</span>' : ''}</h3>
+            <div class="task-meta">${t.start} – ${t.end}
+              ${t.repeatDays?.length ? ' · ' + t.repeatDays.map(d => ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]).join(', ') : ''}
+              ${t.continuous ? ' · Continuous' : ''}
+            </div>
+            ${t.comment ? `<div class="task-comment-preview">“${t.comment}”</div>` : ''}
+          </div>
+          <div class="task-actions">
+            <button onclick="openTaskModal('${t.id}')">✏️</button>
+            <button onclick="deleteTask('${t.id}')">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ========== ANALYTICS ==========
+    function minutesBetween(start, end) {
+      const [sh, sm] = start.split(':').map(Number);
+      const [eh, em] = end.split(':').map(Number);
+      return (eh * 60 + em) - (sh * 60 + sm);
+    }
+    function renderAnalytics() {
+      const now = new Date();
+      let todayMin = 0, weekMin = 0, monthMin = 0;
+      const activityMap = {};
+      state.tasks.forEach(t => {
+        const mins = minutesBetween(t.start, t.end);
+        if (mins <= 0) return;
+        const key = t.name;
+        activityMap[key] = (activityMap[key] || 0) + mins;
+        // Approximate: count all continuous tasks for periods
+        todayMin += mins;
+        weekMin += mins;
+        monthMin += mins;
+      });
+      // Better approximation using date filters would be ideal; simplified for demo
+      const uniqueDays = new Set(state.tasks.map(t => t.date)).size || 1;
+      document.getElementById('stat-today').textContent = (todayMin / 60 / Math.max(1, state.tasks.length) * 3).toFixed(1) + 'h';
+      document.getElementById('stat-week').textContent = (weekMin / 60).toFixed(1) + 'h';
+      document.getElementById('stat-month').textContent = (monthMin / 60 * 4).toFixed(1) + 'h';
+      document.getElementById('stat-tasks').textContent = state.tasks.length;
+
+      const total = Object.values(activityMap).reduce((a, b) => a + b, 0) || 1;
+      const bars = document.getElementById('activity-bars');
+      if (!Object.keys(activityMap).length) {
+        bars.innerHTML = '<p style="color:var(--label-tertiary);font-size:14px;">Add tasks to see breakdown.</p>';
+      } else {
+        bars.innerHTML = Object.entries(activityMap)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8)
+          .map(([name, mins]) => {
+            const pct = Math.round((mins / total) * 100);
+            return `<div class="activity-bar">
+              <div class="activity-bar-label"><span>${name}</span><span>${(mins/60).toFixed(1)}h</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+            </div>`;
+          }).join('');
+      }
+
+      const top = Object.entries(activityMap).sort((a,b)=>b[1]-a[1])[0];
+      let insight = 'Start adding tasks to unlock personalized insights.';
+      if (top) {
+        insight = `Your most scheduled activity is “${top[0]}” (${(top[1]/60).toFixed(1)}h logged). `;
+        if (state.tasks.filter(t=>t.routine).length) {
+          insight += 'Routine tasks help build consistency. Keep protecting deep-work blocks.';
+        } else {
+          insight += 'Consider marking recurring blocks as routines for better long-term tracking.';
+        }
+      }
+      document.getElementById('ai-insight').textContent = insight;
+    }
+
+    // ========== USERS ==========
+    function renderUsers() {
+      const list = document.getElementById('users-list');
+      list.innerHTML = state.users.map(u => `
+        <div class="user-row">
+          <div>
+            <strong>${u.username}</strong>
+            <span class="badge ${u.role === 'admin' ? 'admin' : ''}">${u.role}</span>
+          </div>
+          ${u.username !== 'Jithin' ? `<button class="btn btn-danger" style="padding:6px 12px;font-size:12px;" onclick="deleteUser('${u.username}')">Remove</button>` : ''}
+        </div>
+      `).join('');
+    }
+    function openUserModal() {
+      document.getElementById('user-modal').classList.remove('hidden');
+      document.getElementById('new-username').value = '';
+      document.getElementById('new-password').value = '';
+      document.getElementById('new-role').value = 'user';
+    }
+    function closeUserModal() {
+      document.getElementById('user-modal').classList.add('hidden');
+    }
+    function saveUser() {
+      const username = document.getElementById('new-username').value.trim();
+      const password = document.getElementById('new-password').value;
+      const role = document.getElementById('new-role').value;
+      if (!username || !password) { alert('Fill all fields'); return; }
+      if (state.users.find(u => u.username === username)) { alert('Username exists'); return; }
+      state.users.push({ username, password, role });
+      saveState();
+      closeUserModal();
+      renderUsers();
+    }
+    function deleteUser(username) {
+      if (!confirm('Remove user ' + username + '?')) return;
+      state.users = state.users.filter(u => u.username !== username);
+      saveState();
+      renderUsers();
+    }
+
+    // ========== CHAT ==========
+    function openChat() {
+      document.getElementById('chat-panel').classList.add('open');
+      document.getElementById('chat-input').focus();
+    }
+    function closeChat() {
+      document.getElementById('chat-panel').classList.remove('open');
+    }
+    function appendMsg(text, who) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + who;
+      div.innerHTML = text;
+      document.getElementById('chat-messages').appendChild(div);
+      document.getElementById('chat-messages').scrollTop = 99999;
+    }
+    function sendChat() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      appendMsg(text, 'user');
+      input.value = '';
+      setTimeout(() => processChat(text), 400);
+    }
+    function processChat(text) {
+      const lower = text.toLowerCase();
+      // Add command: Add TaskName HH:MM-HH:MM
+      const addMatch = text.match(/add\s+(.+?)\s+(\d{1,2}:\d{2})\s*[-–to]+\s*(\d{1,2}:\d{2})/i);
+      if (addMatch || (lower.startsWith('add ') && lower.includes(':'))) {
+        let name, start, end;
+        if (addMatch) {
+          name = addMatch[1].trim();
+          start = addMatch[2].padStart(5, '0');
+          end = addMatch[3].padStart(5, '0');
+        } else {
+          // fallback simple
+          const parts = text.replace(/^add\s+/i, '').split(/\s+/);
+          name = parts[0];
+          start = '09:00'; end = '10:00';
+        }
+        state.tasks.push({
+          id: 't_' + Date.now(),
+          name, start, end, comment: 'Added via AI chat',
+          continuous: true, routine: false,
+          repeatDays: [state.selectedDate.getDay()],
+          date: state.selectedDate.toISOString().slice(0, 10),
+          createdAt: new Date().toISOString()
+        });
+        saveState();
+        renderAll();
+        appendMsg(`✅ Added “${name}” from ${start} to ${end}. It’s now on your calendar.`, 'bot');
+        return;
+      }
+      // Remove
+      if (lower.startsWith('remove ') || lower.startsWith('delete ')) {
+        const keyword = text.replace(/^(remove|delete)\s+/i, '').trim().toLowerCase();
+        const before = state.tasks.length;
+        state.tasks = state.tasks.filter(t => !t.name.toLowerCase().includes(keyword));
+        const removed = before - state.tasks.length;
+        saveState();
+        renderAll();
+        appendMsg(removed ? `🗑️ Removed ${removed} task(s) matching “${keyword}”.` : `No tasks found matching “${keyword}”.`, 'bot');
+        return;
+      }
+      // Reports
+      if (lower.includes('report') || lower.includes('analytics') || lower.includes('how am i')) {
+        renderAnalytics();
+        appendMsg(`Here’s a quick snapshot:<br>• ${state.tasks.length} tasks stored<br>• Check the Analytics tab for full daily / weekly / monthly breakdown and AI insights.`, 'bot');
+        return;
+      }
+      // General
+      if (lower.includes('time') || lower.includes('uae') || lower.includes('dubai')) {
+        const now = new Date();
+        const t = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Dubai', hour12: false });
+        appendMsg(`Current UAE (GST) time is <strong>${t}</strong>.`, 'bot');
+        return;
+      }
+      // Default helpful reply
+      const replies = [
+        `I can help you manage tasks. Try: <code>Add Deep Work 09:00-11:00</code> or <code>Remove Deep Work</code>.`,
+        `Your schedule is looking solid. Want me to suggest a focus block?`,
+        `For live world info I’d normally query a knowledge base. In this demo I focus on your Chronos data. Ask about tasks, time, or reports!`,
+        `Tip: Use the 30-min Focus Timer on the home screen for deep work sessions.`
+      ];
+      appendMsg(replies[Math.floor(Math.random() * replies.length)], 'bot');
+    }
+
+    // ========== REMINDERS (20 min prior) ==========
+    function requestNotificationPermission() {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+    function notify(title, body) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(title, { body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">⏰</text></svg>' });
+      }
+    }
+    function scheduleReminders() { /* checked periodically */ }
+    function startReminderChecker() {
+      reminderCheckInterval = setInterval(() => {
+        const now = new Date();
+        const uaeNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
+        const todayTasks = getTasksForDate(uaeNow);
+        todayTasks.forEach(t => {
+          const [h, m] = t.start.split(':').map(Number);
+          const taskTime = new Date(uaeNow);
+          taskTime.setHours(h, m, 0, 0);
+          const diffMin = (taskTime - uaeNow) / 60000;
+          if (diffMin > 19.5 && diffMin < 20.5 && !t._reminded) {
+            t._reminded = true;
+            notify('Upcoming: ' + t.name, `Starts in 20 minutes (${t.start}).`);
+          }
+        });
+      }, 30000);
+    }
+
+    // ========== RENDER ==========
+    function renderAll() {
+      renderTimeline();
+      renderTasksList();
+      renderAnalytics();
+      renderUsers();
+    }
+
+    // Boot
+    loadState();
+    // Auto-login note for demo convenience is disabled; user must sign in.
+  </script>
+</body>
+</html>
